@@ -16,9 +16,25 @@ function lace_set (fn) {
 	return this
 }
 
+var call_ = Function.prototype.call
+
+function lace_call () {
+	call_.apply(this.fn, arguments)
+	return this
+}
+
+var apply_ = Function.prototype.apply
+
+function lace_apply () {
+	apply_.apply(this.fn, arguments)
+	return this
+}
+
 function lace_init (ctx, fn) {
 	if (fn === undefined) fn = ctx, ctx = undefined
 	this.lace = lace_set
+	this.call = lace_call
+	this.apply = lace_apply
 	this.lace(fn)
 	if (typeof(ctx) !== "undefined") this.ctx = ctx
 }
@@ -29,6 +45,32 @@ function lace_construct (ctx, fn) {
 	return laced
 }
 
-return lace_construct;
+function lace_createBoundSet (fn)  {
+	return function lace_boundSet () {
+		return lace_set.call(this, fn)
+	}
+}
+
+function lace_derive (mutators) {
+	function lace_constructor (ctx, fn) {
+		var laced = lace_construct(ctx, fn)
+		var k
+		for (k in mutators) if (!mutators.hasOwnProperty(k)) break; else {
+			Object.defineProperty(laced, k
+			, { configurable:true, get:lace_createBoundSet(mutators[k]) }
+			)
+		}
+		return laced
+	}
+	return lace_constructor
+}
+
+function lace (ctx, fn) {
+	return lace_construct.apply(this, arguments)
+}
+
+lace.derive = lace_derive
+
+return lace;
 
 })));

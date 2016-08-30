@@ -41,3 +41,25 @@ describe("call context precedence", function (ensure) {
 	.call(S1, S1).call(S2, S2)
 	ensure.end()
 })
+
+describe("derived lacer", function (ensure) {
+	var noop = function () { }
+	var S1 = { Sentinel:true, no:1 }
+	var S2 = { Sentinel:true, no:2 }
+	function setStyle (name, value) {
+		this.style[name] = value
+	}
+	function appendChild (child) {
+		if (!this.children) this.children = [child]
+		else this.children.push(child)
+	}
+	var $lace = lace.derive({ style:setStyle, append:appendChild })
+	var o = { style:{}, children:null }
+	$lace(o, noop)
+	.style("display", "block")("color", "red")("font", "serif")
+	.append(S1)(S2)
+
+	ensure.deepEquals(o.style, { display:"block", color:"red", font:"serif" })
+	ensure.deepEquals(o.children, [ S1, S2 ])
+	ensure.end()
+})
