@@ -2,7 +2,7 @@
   "name": "lace.js",
   "version": "0.1.0",
   "description": "Tie up your calls like you tie up your shoes",
-  "main": "lace.js",
+  "main": "lace",
   "scripts": {
     "build": "rollup -f umd -n lace -o lace.js src/lace.js",
     "pretest": "npm run build",
