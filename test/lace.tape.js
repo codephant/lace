@@ -1,11 +1,13 @@
+"use strict"
+
 var describe = require("tape")
-var lace = require("./lace")
+var lace = require("../lace")
 
 describe("lace's call forwarding", function (ensure) {
 	var i = 0
 	function inc (a) { i+=a }
 	lace(inc)(1)(2)(3)
-	ensure.equals(i, 6)
+	ensure.equals(i, 6, "it forwards each call's arguments")
 	ensure.end()
 })
 
@@ -15,6 +17,6 @@ describe("change of laced function", function (ensure) {
 	function cat (s) { accu+=String(s) }
 	lace(inc)(1)(2)(3)
 	.lace(cat)("a")("b")
-	ensure.equals(accu, "36ab")
+	ensure.equals(accu, "36ab", "it uses a different function after re-lacing")
 	ensure.end()
 })
