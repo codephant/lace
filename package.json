@@ -5,6 +5,7 @@
   "main": "lace.js",
   "scripts": {
     "build": "rollup -f umd -n lace -o lace.js src/lace.js",
+    "pretest": "npm run build",
     "test": "tape test/*.tape.js"
   },
   "keywords": [
