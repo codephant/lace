@@ -43,7 +43,6 @@ describe("call context precedence", function (ensure) {
 })
 
 describe("derived lacer", function (ensure) {
-	var noop = function () { }
 	var S1 = { Sentinel:true, no:1 }
 	var S2 = { Sentinel:true, no:2 }
 	function setStyle (name, value) {
@@ -55,7 +54,7 @@ describe("derived lacer", function (ensure) {
 	}
 	var $lace = lace.derive({ style:setStyle, append:appendChild })
 	var o = { style:{}, children:null }
-	$lace(o, noop)
+	$lace(o)
 	.style("display", "block")("color", "red")("font", "serif")
 	.append(S1)(S2)
 

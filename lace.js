@@ -51,9 +51,11 @@ function lace_createBoundSet (fn)  {
 	}
 }
 
+function noop () {}
+
 function lace_derive (mutators) {
-	function lace_constructor (ctx, fn) {
-		var laced = lace_construct(ctx, fn)
+	function lace_constructor (ctx) {
+		var laced = lace_construct(ctx, noop)
 		var k
 		for (k in mutators) if (!mutators.hasOwnProperty(k)) break; else {
 			Object.defineProperty(laced, k
