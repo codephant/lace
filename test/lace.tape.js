@@ -26,7 +26,9 @@ describe("handling of immediate call context", function (ensure) {
 	lace(function checkCtx () {
 		var i = checkCtx.i | 0
 		checkCtx.i = i+1
-		ensure.equals(this, ctxs[i], "it forwards the immediate call context")
+		ensure.equals(this, ctxs[i]
+		, "it forwards the immediate call context: " + String(this)
+		)
 	})
 	().call(ctxs[1]).call(ctxs[2])
 	ensure.end()
@@ -36,9 +38,11 @@ describe("call context precedence", function (ensure) {
 	var S1 = { Sentinel:true, no:1 }
 	var S2 = { Sentinel:true, no:2 }
 	lace(S1, function (expectedCtx) {
-		ensure.equals(this, expectedCtx, "immediate context takes precedence")
+		ensure.equals(this, expectedCtx
+		, "immediate context takes precedence"
+		)
 	})
-	.call(S1, S1).call(S2, S2)
+	.call(S2, S2)
 	ensure.end()
 })
 
@@ -58,7 +62,11 @@ describe("derived lacer", function (ensure) {
 	.style("display", "block")("color", "red")("font", "serif")
 	.append(S1)(S2)
 
-	ensure.deepEquals(o.style, { display:"block", color:"red", font:"serif" })
-	ensure.deepEquals(o.children, [ S1, S2 ])
+	ensure.deepEquals(o
+	,	{ style:{ display:"block", color:"red", font:"serif" }
+		, children:[ S1, S2 ]
+		}
+	, "applies functions from mutator object"
+	)
 	ensure.end()
 })
