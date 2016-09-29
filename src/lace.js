@@ -5,6 +5,9 @@ function lace (ctx, fn) {
 	return construct.apply(this, arguments)
 }
 
-lace.derive = derive
+Object.defineProperties(lace
+,	{ derive:{ value:derive }
+	}
+)
 
 export default lace
