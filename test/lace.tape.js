@@ -30,7 +30,7 @@ describe("handling of immediate call context", function (ensure) {
 		, "it forwards the immediate call context: " + String(this)
 		)
 	})
-	().call(ctxs[1]).call(ctxs[2])
+	().call(ctxs[1]).apply(ctxs[2], [])
 	ensure.end()
 })
 
