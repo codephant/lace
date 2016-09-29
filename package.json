@@ -4,7 +4,7 @@
   "description": "Tie up your calls like you tie up your shoes",
   "main": "lace",
   "scripts": {
-    "build": "rollup -f umd -n lace -o lace.js src/lace.js",
+    "build": "rollup -f umd -n lace src/lace.js | babel -o lace.js",
     "pretest": "npm run build",
     "test": "tape test/*.tape.js"
   },
@@ -15,8 +15,7 @@
   "author": "André Arnold <andre.m.arnold@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-rollup": "^2.3.0",
+    "babel-cli": "^6.16.0",
     "rollup": "^0.34.10",
     "tape": "^4.6.0"
   }
