@@ -1,4 +1,4 @@
-var call_ = Function.prototype.call
+const call_ = Function.prototype.call
 
 export default function lace_call () {
 	call_.apply(this.fn, arguments)

@@ -1,4 +1,4 @@
-var apply_ = Function.prototype.apply
+const apply_ = Function.prototype.apply
 
 export default function lace_apply () {
 	apply_.apply(this.fn, arguments)
