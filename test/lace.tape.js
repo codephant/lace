@@ -37,11 +37,14 @@ describe("handling of immediate call context", function (ensure) {
 describe("call context precedence", function (ensure) {
 	const S1 = { Sentinel:true, no:1 }
 	const S2 = { Sentinel:true, no:2 }
-	lace(S1, function (expectedCtx) {
-		ensure.equals(this, expectedCtx
-		, "immediate context takes precedence"
-		)
-	})
+	lace
+	(	function (expectedCtx) {
+			ensure.equals(this, expectedCtx
+			, "immediate context takes precedence"
+			)
+		}
+	, S1
+	)
 	.call(S2, S2)
 	ensure.end()
 })
