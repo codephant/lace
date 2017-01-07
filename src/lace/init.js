@@ -8,5 +8,5 @@ export default function lace_init (ctx, fn) {
 	this.call = lace_call
 	this.apply = lace_apply
 	this.lace(fn)
-	if (typeof(ctx) !== "undefined") this.ctx = ctx
+	if (ctx !== void 0) this.ctx = ctx
 }
