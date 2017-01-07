@@ -4,7 +4,7 @@ import lace_createBoundSet from "./createBoundSet"
 function noop () {}
 
 export default function lace_derive (mutators) {
-	function lace_constructor (ctx) {
+	function lace_creator (ctx) {
 		const laced = lace_construct(ctx, noop)
 		for (let k in mutators) if (!mutators.hasOwnProperty(k)) break; else {
 			Object.defineProperty(laced, k
@@ -13,5 +13,5 @@ export default function lace_derive (mutators) {
 		}
 		return laced
 	}
-	return lace_constructor
+	return lace_creator
 }
