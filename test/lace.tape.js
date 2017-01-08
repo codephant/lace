@@ -47,7 +47,7 @@ describe("call context precedence", function (ensure) {
 	ensure.end()
 })
 
-describe("custom lacer", function (ensure) {
+describe("custom static lacer", function (ensure) {
 	const S1 = { Sentinel:true, no:1 }
 	const S2 = { Sentinel:true, no:2 }
 	function setStyle (name, value) {
@@ -63,11 +63,36 @@ describe("custom lacer", function (ensure) {
 	.style("display", "block")("color", "red")("font", "serif")
 	.append(S1)(S2)
 
-	ensure.deepEquals(o
-	,	{ style:{ display:"block", color:"red", font:"serif" }
-		, children:[ S1, S2 ]
-		}
-	, "applies functions from mutator object"
+	ensure.deepEquals(o.style, { display:"block", color:"red", font:"serif" }
+	, "applies style function calls"
+	)
+	ensure.deepEquals(o.children, [ S1, S2 ]
+	, "applies children function calls"
+	)
+	ensure.end()
+})
+
+describe("derived dynamic lacer", function (ensure) {
+	const S1 = { Sentinel:true, no:1 }
+	const S2 = { Sentinel:true, no:2 }
+	function setStyle (name, value) {
+		this.style[name] = value
+	}
+	function appendChild (child) {
+		if (!this.children) this.children = [child]
+		else this.children.push(child)
+	}
+	const $lace = lace.derive({ style:"setStyle", append:"appendChild" })
+	const o = { style:{}, children:null, setStyle:setStyle, appendChild:appendChild }
+	$lace(o)
+	.style("display", "block")("color", "red")("font", "serif")
+	.append(S1)(S2)
+
+	ensure.deepEquals(o.style, { display:"block", color:"red", font:"serif" }
+	, "applies style function calls"
+	)
+	ensure.deepEquals(o.children, [ S1, S2 ]
+	, "applies children function calls"
 	)
 	ensure.end()
 })
