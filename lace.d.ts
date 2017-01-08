@@ -3,9 +3,7 @@ export = lace;
 declare function lace (mutator: Function, context?: Object): lace.Laced;
 
 declare namespace lace {
-	export function derive (mutator: {[key: string]: Function}): LaceCreator;
-
-	export interface Laced {
+	export interface Lacer {
 		/**
 		 * Call the currently set mutator.
 		 *
@@ -39,7 +37,11 @@ declare namespace lace {
 		lace (mutator: Function, context?: Object): this;
 	}
 
-	export interface LaceCreator {
-		(ctx: Object): Laced | {};
+	export function derive (mutator: {[key: string]: Function}): CustomLacerCreator;
+
+	export type CustomLacer = Lacer | {};
+
+	export interface CustomLacerCreator {
+		(ctx: Object): CustomLacer;
 	}
 }
