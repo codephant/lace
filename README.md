@@ -32,9 +32,9 @@ Creates a factory function that returns a customized lacing function (*lacer*)
 with *`mutators`* as its methods. This can be used to create *lacer*s, that are
 specialized in lacing method calls to a certain type/class.
 
-If the value of a *`mutators`* *`key`* is a function, then the very function is
-used for the laced calls. However if the *`key`* is a string, then the function
-is fetched from the calling context of the *lacer*.
+If the value of a *`mutators` `key`* is a function, then the very function is
+used for the laced calls. However if the value is a string, then the function
+is fetched from the calling context given to the *lacer* on instantiation.
 
 See this DOM example:
 
@@ -44,16 +44,15 @@ const domLacer = lace.derive(
 	, listener: Element.prototype.addEventListener
 	}
 );
-
 domLacer(document.querySelector("div.my-fancy"))
-.attribute
-("title", "some fancy title")
-("data-awesome", "fancy and awesome info")
-.listener
-("click", ev => { console.log("my fancy was clicked") }
-("mouseout", ev => {
-	lace(console.log, console)
-	("don't leave my fancy, consider this:")
-	(ev.target.dataset.awesome)
-});
+	.attribute
+	("title", "some fancy title")
+	("data-awesome", "fancy and awesome info")
+	.listener
+	("click", ev => { console.log("my fancy was clicked") }
+	("mouseout", ev => {
+		lace(console.log, console)
+		("don't leave my fancy, consider this:")
+		(ev.target.dataset.awesome)
+	});
 ```
