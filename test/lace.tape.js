@@ -1,7 +1,5 @@
-"use strict"
-
 const describe = require("tape")
-const lace = require("../lace")
+const { lace, newLacer } = require("./lace")
 
 describe("lace's call forwarding", function (ensure) {
 	let i = 0
@@ -49,7 +47,7 @@ describe("call context precedence", function (ensure) {
 	ensure.end()
 })
 
-describe("derived lacer", function (ensure) {
+describe("custom lacer", function (ensure) {
 	const S1 = { Sentinel:true, no:1 }
 	const S2 = { Sentinel:true, no:2 }
 	function setStyle (name, value) {
@@ -59,7 +57,7 @@ describe("derived lacer", function (ensure) {
 		if (!this.children) this.children = [child]
 		else this.children.push(child)
 	}
-	const $lace = lace.derive({ style:setStyle, append:appendChild })
+	const $lace = newLacer({ style:setStyle, append:appendChild })
 	const o = { style:{}, children:null }
 	$lace(o)
 	.style("display", "block")("color", "red")("font", "serif")

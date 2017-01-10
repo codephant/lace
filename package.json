@@ -4,9 +4,9 @@
   "description": "Tie up your calls like you tie up your shoes",
   "main": "lace",
   "scripts": {
-    "build": "rollup -f umd -n lace src/lace.js | babel -o lace.js",
+    "build": "rollup -f cjs src/lace.js | babel --presets=es2015-node6 -o lace.js",
     "pretest": "npm run --silent build",
-    "test": "tape test/*.tape.js"
+    "test": "rollup -f cjs test/lace.tape.js | babel --presets=es2015-node6 | node"
   },
   "keywords": [
     "chaining",
@@ -16,6 +16,8 @@
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-es2015-node6": "^0.4.0",
     "rollup": "^0.34.10",
     "tape": "^4.6.0"
   }
