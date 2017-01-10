@@ -19,31 +19,14 @@ describe("change of laced function", ensure => {
 	ensure.end()
 })
 
-describe("handling of immediate call context", ensure => {
-	const ctxs = [undefined, null, { Sentinel: true }]
-	lace(function checkCtx () {
-		const i = checkCtx.i | 0
-		checkCtx.i = i+1
-		ensure.equals(this, ctxs[i]
-		, "it forwards the immediate call context: " + String(this)
-		)
-	})
-	().call(ctxs[1]).apply(ctxs[2], [])
-	ensure.end()
-})
-
-describe("call context precedence", ensure => {
-	const S1 = { Sentinel:true, no:1 }
-	const S2 = { Sentinel:true, no:2 }
+describe("lace's call context forwarding", ensure => {
+	const Sentinel = { Sentinel: true }
 	lace
-	(	function (expectedCtx) {
-			ensure.equals(this, expectedCtx
-			, "immediate context takes precedence"
-			)
+	(	function checkCtx (expectedCtx) {
+			ensure.strictEquals(this, expectedCtx, "it forwards the call context")
 		}
-	, S1
-	)
-	.call(S2, S2)
+	, Sentinel
+	)(Sentinel)
 	ensure.end()
 })
 
