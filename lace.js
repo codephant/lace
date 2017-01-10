@@ -11,52 +11,54 @@ function lace_create() {
 
 function lace_set(fn, ctx) {
 	this.fn = fn;
-	if (ctx !== void 0) this.ctx = ctx;
+	if (arguments.length > 1) this.ctx = ctx;
 	return this;
 }
 
-const call_ = Function.prototype.call;
+function lace_setByKey(key, ctx) {
+	const withCtx = arguments.length > 1;
+	ctx = withCtx ? ctx : this.ctx;
 
-function lace_call(thisArg) {
-	this.ctx = thisArg;
-	call_.apply(this.fn, arguments);
-	return this;
+	if (ctx == null) throw new TypeError("cannot lace by key without context");
+
+	const fn = ctx[key];
+	if (typeof fn !== "function") throw new TypeError("can only lace functions");
+
+	return withCtx ? lace_set.call(this, fn, ctx) : lace_set.call(this, fn);
 }
 
-const apply_ = Function.prototype.apply;
-
-function lace_apply(thisArg, argList) {
-	this.ctx = thisArg;
-	apply_.apply(this.fn, arguments);
-	return this;
+function lace_dynamicSet(keyOrFn) {
+	return (typeof keyOrFn === "string" || typeof keyOrFn === "symbol" ? lace_setByKey : lace_set).apply(this, arguments);
 }
 
 function lace_init(fn, ctx) {
-	this.lace = lace_set;
-	this.call = lace_call;
-	this.apply = lace_apply;
-	this.lace(fn, ctx);
+	this.lace = lace_dynamicSet;
+	lace_dynamicSet.apply(this, arguments);
 }
 
-function lace_construct(fn, ctx) {
-	const laced = lace_create();
-	lace_init.apply(laced, arguments);
-	return laced;
+function lace_lacer(fn, ctx) {
+	const lacer = lace_create();
+	lace_init.apply(lacer, arguments);
+	return lacer;
+}
+
+var noop = () => {};
+
+function lace_lacerFor(context) {
+	return lace_lacer(noop, context);
 }
 
 function lace_bindSet(fn) {
-	return typeof fn === "string" || typeof fn === "symbol" ? function lace_boundDynamSet() {
-		return lace_set.call(this, this.ctx[fn]);
-	} : function lace_boundStaticSet() {
-		return lace_set.call(this, fn);
+	const set = typeof fn === "string" || typeof fn === "symbol" ? lace_setByKey : lace_set;
+
+	return function lace_boundSet() {
+		return set.call(this, fn);
 	};
 }
 
-function noop() {}
-
 function lace_newLacer(mutators) {
 	function lace_customLacer(ctx) {
-		const lacer = lace_construct(noop, ctx);
+		const lacer = lace_lacerFor(ctx);
 		for (let k in mutators) if (!mutators.hasOwnProperty(k)) break;else {
 			Object.defineProperty(lacer, k, { configurable: true, get: lace_bindSet(mutators[k]) });
 		}
@@ -65,6 +67,7 @@ function lace_newLacer(mutators) {
 	return lace_customLacer;
 }
 
-exports['default'] = lace_construct;
-exports.lace = lace_construct;
+exports['default'] = lace_lacer;
+exports.lace = lace_lacer;
 exports.newLacer = lace_newLacer;
+exports.lacerFor = lace_lacerFor;
