@@ -6,5 +6,5 @@ export default function lace_init (fn, ctx) {
 	this.lace = lace_set
 	this.call = lace_call
 	this.apply = lace_apply
-	this.lace(fn, ctx)
+	lace_set.apply(this, arguments)
 }
