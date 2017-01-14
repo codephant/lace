@@ -67,7 +67,21 @@ function lace_newLacer(mutators) {
 	return lace_customLacer;
 }
 
+var LacerProp = "_customLacer";
+
+const isKeyType = { string: true, symbol: true };
+
+function lace_createLacerMethod(funcOrKey) {
+	const set = isKeyType[typeof funcOrKey] ? lace_setByKey : lace_set;
+	return function lace_lacerMethod() {
+		const lacer = (this[LacerProp] || lace_lacerFor)(this);
+		set.call(lacer, funcOrKey);
+		return lacer;
+	};
+}
+
 exports['default'] = lace_lacer;
 exports.lace = lace_lacer;
 exports.newLacer = lace_newLacer;
 exports.lacerFor = lace_lacerFor;
+exports.lacerMethod = lace_createLacerMethod;
