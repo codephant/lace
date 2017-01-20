@@ -1,6 +1,6 @@
 {
   "name": "lace.js",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Tie up your calls like you tie up your shoes",
   "main": "lace",
   "scripts": {
