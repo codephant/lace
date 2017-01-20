@@ -67,7 +67,44 @@ function lace_newLacer(mutators) {
 	return lace_customLacer;
 }
 
+var LacerProp = "_customLacer";
+
+const isKeyType = { string: true, symbol: true };
+
+function lace_createLacerMethod(funcOrKey) {
+	const set = isKeyType[typeof funcOrKey] ? lace_setByKey : lace_set;
+	return function lace_lacerMethod() {
+		const lacer = (this[LacerProp] || lace_lacerFor)(this);
+		set.call(lacer, funcOrKey);
+		return lacer;
+	};
+}
+
+const owns = Object.prototype.hasOwnProperty;
+
+function lace_defMappedProps(obj, descriptors, map) {
+	for (let k in descriptors) if (!owns.call(descriptors, k)) break;else {
+		Object.defineProperty(obj, k, map(descriptors[k]));
+	}
+	return obj;
+}
+
+function lace_defineCustomLacer(obj, mutators) {
+	Object.defineProperty(obj, LacerProp, { configurable: true, value: lace_newLacer(mutators) });
+}
+
+function laceDescToPropDesc(ldesc) {
+	return { configurable: true, get: lace_createLacerMethod(ldesc) };
+}
+
+function lace_defineLacerProperties(obj, mutators) {
+	lace_defineCustomLacer(obj, mutators);
+	return lace_defMappedProps(obj, mutators, laceDescToPropDesc);
+}
+
 exports['default'] = lace_lacer;
 exports.lace = lace_lacer;
 exports.newLacer = lace_newLacer;
 exports.lacerFor = lace_lacerFor;
+exports.lacerMethod = lace_createLacerMethod;
+exports.defineLacerProperties = lace_defineLacerProperties;
