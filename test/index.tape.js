@@ -1,11 +1,9 @@
 import describe from "tape"
 import lace from "./lace.tape"
-import newLacer from "./newLacer.tape"
-import lacerMethod from "./lacerMethod.tape"
-import defLacerProps from "./defLacerProps.tape"
+import creator from "./creator.tape"
+import define from "./define.tape"
 
 [ lace
-, newLacer
-, lacerMethod
-, defLacerProps
+, creator
+, define
 ].forEach(t => t(describe))
