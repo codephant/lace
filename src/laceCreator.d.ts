@@ -1,9 +1,15 @@
 import { Lacer } from "./lace";
 import { Mutators } from "./mutator";
 
-export type CustomLacer = Lacer | {};
+export type LaceProperties<K extends string> = {
+	readonly [k in K]: CustomLacer<K>
+}
 
-export type CustomLacerCreator = (ctx: Object) => CustomLacer;
+export type CustomLacer<K extends string> = Lacer & LaceProperties<K>
+
+export interface CustomLacerCreator<K> {
+	(ctx: Object): CustomLacer<K>
+}
 
 /**
  * Creates a factory function that returns a customized lacing function (*lacer*)
@@ -16,4 +22,4 @@ export type CustomLacerCreator = (ctx: Object) => CustomLacer;
  *
  * @param mutators All mutator functions that can be called on the context.
  */
-export const laceCreator: (mutators: Mutators) => CustomLacerCreator;
+export const laceCreator: <K extends string>(mutators: Mutators<K>) => CustomLacerCreator<K>

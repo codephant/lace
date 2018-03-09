@@ -1,4 +1,4 @@
-import { lace } from ".."
+import { lace } from "../index"
 
 export default describe => {
 

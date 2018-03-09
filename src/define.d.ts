@@ -1,4 +1,5 @@
 import { Mutator, Mutators } from "./mutator"
+import { LaceProperties } from "./laceCreator";
 
 /**
  * Defines for all *key*s a property with the same name, which returns a *lacer*
@@ -16,6 +17,6 @@ import { Mutator, Mutators } from "./mutator"
  *
  * @returns the *object* parameter
  */
-export const defineLaceProperties: <T>(object: T, mutators: Mutators) => T
+export const defineLaceProperties: <T, U extends Mutators<string>>(object: T, mutators: U) => T & LaceProperties<keyof U>
 
-export const defineLaceProperty: <T>(object: T, key: string | symbol, mutator: Mutator) => T
+export const defineLaceProperty: <T, K extends string>(object: T, key: K, mutator: Mutator) => T & LaceProperties<K>

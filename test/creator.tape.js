@@ -1,4 +1,4 @@
-import { laceCreator } from ".."
+import { laceCreator } from "../index"
 
 const S1 = { Sentinel:true, no:1 }
 const S2 = { Sentinel:true, no:2 }

@@ -2,9 +2,8 @@
   "name": "lace.js",
   "version": "0.2.0",
   "description": "Tie up your calls like you tie up your shoes",
-  "main": "lace",
   "scripts": {
-    "build": "rollup -f cjs src/index.js | babel --presets=es2015-node6 -o lace.js",
+    "build": "rollup -f cjs src/index.js | babel --presets=es2015-node6 -o index.js",
     "pretest": "npm run --silent build",
     "test": "cd test ; rollup -f cjs index.tape.js | babel --presets=es2015-node6 | tee tape.js | node"
   },

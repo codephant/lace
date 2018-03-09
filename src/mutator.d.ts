@@ -1,3 +1,3 @@
 export type Mutator = Function | string | symbol;
 
-export type Mutators = {[key: string]: Mutator};
+export type Mutators<K extends string> = Record<K, Mutator>;
