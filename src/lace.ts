@@ -15,6 +15,37 @@ export interface Lacer {
 	lace (mutator: Mutator, context?: Object): this;
 }
 
+const isKeyType = { string: true, symbol: true }
+
+const resolveFn = (fn: Mutator, ctx: Object | undefined) => {
+	if (typeof fn === "function") return fn
+	else {
+		if (isKeyType[typeof fn]) {
+			if (typeof ctx == null) {
+				throw new TypeError("lace: can only use symbols and string for functions when context is given")
+			}
+			fn = ctx[fn]
+		}
+		if (typeof fn !== "function") {
+			throw new TypeError("lace: can only lace function/methods; found: " + typeof fn)
+		}
+
+		return fn
+	}
+}
+
+interface Lace {
+	fn: Function;
+	ctx: Object;
+	lacer: Lacer;
+}
+
+const setContext = (lace: Lace, fn: Mutator, ctx: Object | undefined) => {
+	if (typeof ctx !== "undefined") lace.ctx = ctx
+	lace.fn = resolveFn(fn, lace.ctx)
+	return lace
+}
+
 /**
  * Creates a new function that passes all it's arguments to the *`mutator`*.
  * However it ignores the return value of *`mutator`* and returns itself.
@@ -26,4 +57,15 @@ export interface Lacer {
  * If *`mutator`* is a string or symbol the actual mutator function is taken from
  * the given calling context. If no context was given a `TypeError` is thrown.
  */
-export const lace: (mutator: Mutator, context?: Object) => Lacer
+export const lace = (mutator: Mutator, context?: Object): Lacer => {
+	const lace: Lace =
+		{
+			fn: undefined, ctx: undefined,
+			lacer: Object.defineProperty(
+				(...args) => (lace.fn.apply(lace.ctx, args), lace.lacer),
+				"lace",
+				{ value: (fn, ctx) => setContext(lace, fn, ctx).lacer },
+			)
+		}
+	return lace.lacer.lace(mutator, context)
+}

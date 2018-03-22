@@ -1,4 +1,4 @@
-import { defineLaceProperties, defineLaceProperty } from "../index"
+import { defineLaceProperties, defineLaceProperty } from "../src/define"
 
 export default describe => {
 

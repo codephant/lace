@@ -1,5 +1,7 @@
-import { Lacer } from "./lace";
-import { Mutators } from "./mutator";
+import { Lacer } from "./lace"
+import { Mutators } from "./mutator"
+import { laceFor } from "./laceFor"
+import { intoDescriptors } from "./intoDescriptors"
 
 export type LaceProperties<K extends string> = {
 	readonly [k in K]: CustomLacer<K>
@@ -7,9 +9,10 @@ export type LaceProperties<K extends string> = {
 
 export type CustomLacer<K extends string> = Lacer & LaceProperties<K>
 
-export interface CustomLacerCreator<K> {
-	(ctx: Object): CustomLacer<K>
-}
+const lacingDescriptor = (fn) => ({ configurable: true, get(this: Lacer) { return this.lace(fn) } })
+
+const makeCreator = <K extends string>(descriptors: PropertyDescriptorMap) =>
+	(ctx: Object) => Object.defineProperties(laceFor(ctx), descriptors) as CustomLacer<K>
 
 /**
  * Creates a factory function that returns a customized lacing function (*lacer*)
@@ -22,4 +25,5 @@ export interface CustomLacerCreator<K> {
  *
  * @param mutators All mutator functions that can be called on the context.
  */
-export const laceCreator: <K extends string>(mutators: Mutators<K>) => CustomLacerCreator<K>
+export const laceCreator = <K extends string>(mutators: Mutators<K>) =>
+		makeCreator<K>(intoDescriptors(mutators, lacingDescriptor))

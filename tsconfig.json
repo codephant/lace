@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "checkJs": true,
         "target": "es2015",
-        "module": "es2015",
+        "module": "commonjs",
         "baseUrl": "node_modules",
         "lib": [
             "es2015"

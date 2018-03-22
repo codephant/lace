@@ -1,5 +1,16 @@
 import { Mutator, Mutators } from "./mutator"
-import { LaceProperties } from "./laceCreator";
+import { LaceProperties, laceCreator } from "./laceCreator"
+import { laceFor } from "./laceFor"
+import { intoDescriptors } from "./intoDescriptors"
+
+const customLacerKey = "$CustomLacer"
+
+const makeLacerDescriptor = (fn) => ({
+	configurable: true,
+	get() {
+		return (this[customLacerKey] || laceFor)(this).lace(fn)
+	}
+})
 
 /**
  * Defines for all *key*s a property with the same name, which returns a *lacer*
@@ -17,6 +28,17 @@ import { LaceProperties } from "./laceCreator";
  *
  * @returns the *object* parameter
  */
-export const defineLaceProperties: <T, U extends Mutators<string>>(object: T, mutators: U) => T & LaceProperties<keyof U>
+export const defineLaceProperties =
+	<T, U extends Mutators<string>>(object: T, mutators: U): T & LaceProperties<keyof U> => (
+		Object.defineProperty(object, customLacerKey, {
+			configurable: true,
+			value: laceCreator(mutators)
+		}),
+		Object.defineProperties(object,
+			intoDescriptors(mutators, makeLacerDescriptor)
+		)
+	)
 
-export const defineLaceProperty: <T, K extends string>(object: T, key: K, mutator: Mutator) => T & LaceProperties<K>
+export const defineLaceProperty =
+	<T, K extends string>(object: T, key: K, mutator: Mutator): T & LaceProperties<K> =>
+		Object.defineProperty(object, key, makeLacerDescriptor(mutator))

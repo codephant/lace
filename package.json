@@ -3,21 +3,26 @@
   "version": "0.2.0",
   "description": "Tie up your calls like you tie up your shoes",
   "scripts": {
-    "build": "rollup -f cjs src/index.js | babel --presets=es2015-node6 -o index.js",
-    "pretest": "npm run --silent build",
-    "test": "cd test ; rollup -f cjs index.tape.js | babel --presets=es2015-node6 | tee tape.js | node"
+    "build": "npm run --silent build-es6 ; npm run --silent build-cjs",
+    "build-single-cjs": "rollup -c -f cjs | babel --presets=es2015-node6 -o index.cjs.js",
+    "build-single-es6": "rollup -c -f es | babel --presets=es2015 -o index.es6.js",
+    "build-cjs": "babel --presets=es2015-node6 --copy-files --out-dir cjs src",
+    "build-es6": "babel --presets=es2015 --copy-files --out-dir es6 src",
+    "test": "cd test ; ts-node index.tape"
   },
   "keywords": [
     "chaining",
     "tooling"
   ],
-  "author": "André Arnold <andre.m.arnold@gmail.com>",
+  "author": "André M. Psiorz <andre.m.arnold@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-node6": "^0.4.0",
     "rollup": "^0.56.5",
-    "tape": "^4.9.0"
+    "tape": "^4.9.0",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.7.2"
   }
 }
