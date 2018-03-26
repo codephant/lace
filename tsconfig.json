@@ -3,7 +3,8 @@
         "allowJs": true,
         "checkJs": true,
         "target": "es2015",
-        "module": "commonjs",
+        "module": "es2015",
+        "outDir": "dist/es",
         "baseUrl": "node_modules",
         "lib": [
             "es2015"
@@ -11,5 +12,8 @@
     },
     "exclude": [
         "node_modules"
+    ],
+    "files": [
+        "src/index"
     ]
 }
