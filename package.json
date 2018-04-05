@@ -3,10 +3,17 @@
   "version": "0.2.0",
   "description": "Tie up your calls like you tie up your shoes",
   "scripts": {
-    "build": "npm run --silent build-es ; npm run --silent build-cjs ; npm run --silent build-umd",
-    "build-es": "rm -f -r dist/es && mkdir -p dist/es && tsc -p tsconfig.json",
-    "build-cjs": "rm -f -r dist/cjs && mkdir -p dist/cjs && rollup -c -f cjs -o dist/cjs/index.js",
-    "build-umd": "rm -f -r dist/umd && mkdir -p dist/umd && rollup -c -f umd -n lace -o dist/umd/index.js",
+    "env": "env",
+    "build": "for t in build:es build:cjs build:umd ; do npm run $t --silent ; done",
+    "clear:es": "rm -f -r dist/es && mkdir -p dist/es",
+    "prebuild:es": "npm run clear:es --silent",
+    "build:es": "tsc -p tsconfig.json",
+    "clear:cjs": "rm -f -r dist/cjs && mkdir -p dist/cjs",
+    "prebuild:cjs": "npm run clear:cjs --silent",
+    "build:cjs": "rollup -c -f cjs -o dist/cjs/index.js",
+    "clear:umd": "rm -f -r dist/umd && mkdir -p dist/umd",
+    "prebuild:umd": "npm run clear:umd --silent",
+    "build:umd": "rollup -c -f umd -n lace -o dist/umd/index.js",
     "test": "cd test ; ts-node index.tape"
   },
   "keywords": [

@@ -3,7 +3,7 @@
         "allowJs": true,
         "checkJs": true,
         "target": "es2015",
-        "module": "es2015",
+        "module": "commonjs",
         "outDir": "dist/es",
         "baseUrl": "node_modules",
         "lib": [
