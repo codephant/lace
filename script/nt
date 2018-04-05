@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+
+const promising = (() => {
+	const callback = (resolve, reject) => (err, ...dat) =>
+		err	? reject(err) : resolve(...(dat.length > 1 ? [dat] : dat))
+
+	return (fn) =>
+		(...args) =>
+			new Promise((resolve, reject) =>
+				fn(
+					...args,
+					callback(resolve, reject)
+				)
+			)
+})()
+
+const replace = (() => {
+	const replacer = (() => {
+		const exactReplacer = (match, replacement) => (str) =>
+			str === match ? replacement : str
+
+		const startReplacer = (start, replacement) => (str) =>
+			str.startsWith(start)
+			? replacement + str.slice(start.length)
+			: str
+
+		const endReplacer = (end, replacement) => (str) =>
+			str.endsWith(end)
+			? str.slice(0, str.length - end.length) + replacement
+			: str
+
+		const anyReplacer = (needle, replacement) => (str) =>
+			str.split(needle).join(replacement)
+
+		return (pattern, replacement) => {
+			const starLeft = (pattern[0] === "*")|0
+			const starRight = (pattern.slice(-1) === "*")|0
+			const noStars = starLeft + starRight === 0 ? pattern
+				: pattern.slice(starLeft, pattern.length - starRight)
+			return {
+				0: exactReplacer,
+				1: startReplacer,
+				2: endReplacer,
+				3: anyReplacer
+			}[(starLeft << 1) + starRight](noStars, replacement)
+		}
+	})()
+
+	const fromPair = pair => replacer(...pair.split(":"))
+
+	const fromPairs = (() => {
+		const apply = (s, r) => r(s)
+		const makeReplace = (replacers) => (str) => replacers.reduce(apply, str)
+		return (pairs) =>	makeReplace(pairs.map(fromPair))
+	})()
+
+	const fromString = (str) =>	fromPairs(str.split(","))
+
+	return { replacer, fromString, fromPairs, fromPair }
+})()
+
+
+
+const { resolve: resolvePath } = require("path")
+
+const [ stat, glob ] =
+	[ require("fs").stat
+	, require("glob")
+	].map(promising)
+
+const catchNoEnt = (err) =>
+	(err && err.code === 'ENOENT')
+	? null
+	: Promise.reject(err)
+
+const log = (o) => (console.log(o), o)
+
+const isNewerThan = (inFile, outFile) =>
+	Promise.all(
+		[ stat(inFile).catch(catchNoEnt)
+		, stat(outFile).catch(catchNoEnt)
+		]
+	)
+	.then(([inStat, outStat]) => !outStat || inStat.mtimeMs > outStat.mtimeMs)
+
+const someNewerThan = (fileGlob, replace) =>
+	glob(fileGlob)
+	.then(files =>
+		Promise.all(
+			(files || [fileGlob])
+			.map(file => isNewerThan(file, replace(file)))
+		)
+	)
+	.then(newers => newers.some(Boolean))
+
+const whichNewerThan = (fileGlob, replace) =>
+	glob(fileGlob)
+	.then(files =>
+		Promise.all(
+			(files || [fileGlob])
+			.map(file => isNewerThan(file, replace(file)))
+		)
+		.then(newers => files.filter((_, i) => newers[i]))
+	)
+
+const args = process.argv.slice(2)
+
+whichNewerThan(args[0], replace.fromPairs(args.slice(1)))
+.then(log)
+
+// log(resolve("package.json", "src"))

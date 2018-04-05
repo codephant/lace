@@ -23,6 +23,7 @@
   "author": "André M. Psiorz <andre.m.arnold@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "glob": "^7.1.2",
     "rollup": "^0.56.5",
     "tape": "^4.9.0",
     "ts-node": "^5.0.1",
