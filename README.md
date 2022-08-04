@@ -39,7 +39,7 @@ lacerFor(document.querySelector("div.my-fancy"))
 	("title", "some fancy title")
 	("data-awesome", "fancy and awesome info")
 	.lace(Element.prototype.addEventListener)
-	("click", ev => { console.log("my fancy was clicked") }
+	("click", ev => { console.log("my fancy was clicked") })
 	("mouseout", ev => {
 		lace(console.log, console)
 		("don't leave my fancy, consider this:")
@@ -70,7 +70,7 @@ domLacer(document.querySelector("div.my-fancy"))
 	("title", "some fancy title")
 	("data-awesome", "fancy and awesome info")
 	.listener
-	("click", ev => { console.log("my fancy was clicked") }
+	("click", ev => { console.log("my fancy was clicked") })
 	("mouseout", ev => {
 		lace(console.log, console)
 		("don't leave my fancy, consider this:")
